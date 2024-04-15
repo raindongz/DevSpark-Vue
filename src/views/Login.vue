@@ -40,7 +40,7 @@ export default {
       };
 
       instance
-        .post("api/user/login", requestData, {
+        .post("user/login", requestData, {
           headers: {
             Authorization: null,
           },
