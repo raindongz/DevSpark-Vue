@@ -173,7 +173,7 @@ export default {
       };
 
       instance
-        .post("user/create", requestData, {
+        .post("api/user/create", requestData, {
           headers: {
             Authorization: null,
           },
