@@ -5,37 +5,76 @@
       <div class="photo-frame">
         <img :src="currentPhoto" alt="Engineer's Photo" @click="goToProfile" />
       </div>
+      
+      <!-- Engineer's username -->
+      <div class="username-display">{{ currentUser.username }}</div>
   
       <!-- Navigation arrows -->
       <button class="arrow left-arrow" @click="previousPhoto"><</button>
       <button class="arrow right-arrow" @click="nextPhoto">></button>
   
       <!-- Like button -->
-      <button class="like-button" @click="goToChat">like</button>
+      <button class="like-button" @click="likeOrDislike">likeOrDislike</button>
     </div>
   </template>
   
   <script>
+  import axios from 'axios';
+
   export default {
     name: 'EngineerPhoto',
   
     data() {
       return {
         currentPhotoIndex: 0,
+        currentUserIndex: 0,
         photos: [
           'images/User.png', // This is the path to your image based on your project structure
           // Add paths to other images as needed
         ],
+        users: [],
       };
+    },
+
+    mounted() {
+      this.fetchUserData();
     },
   
     computed: {
       currentPhoto() {
-        return this.photos[this.currentPhotoIndex];
+        return this.users.length > 0 ? this.users[this.currentPhotoIndex].avatars : '';
       },
+      currentUser() {
+        return this.users.length > 0 ? this.users[this.currentUserIndex] : {};
+      }
     },
   
     methods: {
+      fetchUserData() {
+        axios.post('https://devspark.click/match/get-my-recommend-list', null, {
+          headers: { 'Authorization': 'Bearer eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJodHRwczovL2RldnNwYXJrLmNsaWNrIiwiZXhwIjoxNzEzMDg5MDIwLCJzdWIiOiI4In0.U3bditHIOloR8f098srrD9qHi4l9sDcbnRSfws3bEI7rJVEb2Nc45_nmSCP0oDBpCq4LHs9IoVTHU0wzCwcxlIzM33zNyXqbbq_0p4tHZT69hs5500RU6uvUJU3hPy63Ai8QBN-nqMUaJarLykqnim_3IS969Fa7DhJpaj_W2MK6FhZa7SupGt7Sp_XGlliqV3RX7fUA8hmdSF8W0WMMH4Q6RWz0fID3nzI267PyNZOtpi6xkfRk2VU9AtMMDGV5g-Kjn6BP2YYPjqcfi4ULqQwAmUnN68ElpcBFfNY3uEJr1VyRdEAliMDs6qA0EXnvHjA4OZJd6CbtRVh1qqtMpQ' }
+        })
+        .then(response => {
+          this.users = response.data.recommendedUserList;
+        })
+        .catch(error => console.error('Error:', error));
+      },
+      likeOrDislike() {
+        axios.post('https://devspark.click/match/like-or-unlike', {
+          personILiked: this.currentUser.userId
+        }, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJodHRwczovL2RldnNwYXJrLmNsaWNrIiwiZXhwIjoxNzEzMDg5MDIwLCJzdWIiOiI4In0.U3bditHIOloR8f098srrD9qHi4l9sDcbnRSfws3bEI7rJVEb2Nc45_nmSCP0oDBpCq4LHs9IoVTHU0wzCwcxlIzM33zNyXqbbq_0p4tHZT69hs5500RU6uvUJU3hPy63Ai8QBN-nqMUaJarLykqnim_3IS969Fa7DhJpaj_W2MK6FhZa7SupGt7Sp_XGlliqV3RX7fUA8hmdSF8W0WMMH4Q6RWz0fID3nzI267PyNZOtpi6xkfRk2VU9AtMMDGV5g-Kjn6BP2YYPjqcfi4ULqQwAmUnN68ElpcBFfNY3uEJr1VyRdEAliMDs6qA0EXnvHjA4OZJd6CbtRVh1qqtMpQ'
+          }
+        })
+        .then(() => {
+          alert('Successful!');
+        })
+        .catch(error => {
+          alert('Error liking the user: ' + error.response.data);
+        });
+      },
       goToProfile() {
         this.$router.push('/profile'); 
       },
@@ -46,10 +85,16 @@
         if (this.currentPhotoIndex < this.photos.length - 1) {
           this.currentPhotoIndex++;
         }
+        if (this.currentUserIndex < this.users.length - 1) {
+          this.currentUserIndex++;
+        }
       },
       previousPhoto() {
         if (this.currentPhotoIndex > 0) {
           this.currentPhotoIndex--;
+        }
+        if (this.currentUserIndex > 0) {
+          this.currentUserIndex--;
         }
       },
     },
@@ -78,6 +123,12 @@
     height: 300px; /* Larger photo */
     object-fit: cover;
     cursor: pointer;
+  }
+
+  .username-display {
+    margin-top: 10px;
+    font-size: 18px;
+    color: #333;
   }
   
   .arrow {

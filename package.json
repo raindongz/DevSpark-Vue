@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@joeattardi/emoji-button": "^4.6.4",
+    "axios": "^1.6.8",
     "core-js": "^3.8.3",
     "emoji-mart-vue-fast": "^15.0.1",
     "vue": "^3.2.13",
