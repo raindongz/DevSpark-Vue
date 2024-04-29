@@ -2,7 +2,11 @@
   <div class="user-list">
     <h3>matched list</h3>
     <ul>
-      <li v-for="user in userlist.matchedUserInfoList" :key="user.userId" class="user-item">
+      <li v-for="user in userlist.matchedUserInfoList"
+          :key="user.userId"
+          class="user-item"
+          :class="{ 'selected': selectedUser && user.userId === selectedUser.userId }"
+          @click="handleSelectUser(user)">
         <div class="user-avatar">{{ capitalUpper(user.username) }}</div>
         <div class="user-name">{{ user.username }}</div>
       </li>
@@ -18,10 +22,18 @@ export default {
     return {
       userlist: {},
       savedFields: {},
+      selectedUser: {},
     }
   },
- 
+
   methods: {
+    // 处理选中后立刻获取聊天记录
+    handleSelectUser(user) {
+      // 在本类中用于标识和组件变色
+      this.selectedUser = user;
+      // 触发调用聊天记录刷新数据
+      this.$parent.selectUserTrigger(user);
+    },
     saveFields() {
     this.savedFields.userlist = this.userlist;
   },
@@ -35,7 +47,11 @@ export default {
         .post(url)
         .then(response => {
           this.userlist = response.data;
-
+          // 获取聊天列表后，将第一个用户id存入localStorage，用于立刻获取聊天记录
+          if (response && response.data && response.data.matchedUserInfoList && response.data.matchedUserInfoList.length > 0) {
+            const userId = response.data.matchedUserInfoList[0].userId;
+            localStorage.setItem("selectedUser", parseInt(userId));
+          }
           console.log('用户信息:', this.userInfo);
         })
         .catch(error => {
@@ -105,5 +121,8 @@ export default {
 .user-name {
   font-size: 1em;
   color: #333;
+}
+.selected {
+  background-color: #a2a2d0; /* 鼠标点击选择后变色 */
 }
 </style>
