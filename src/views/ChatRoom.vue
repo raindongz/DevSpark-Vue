@@ -75,7 +75,7 @@ export default {
                 this.messages[i].isMine = true;
                 this.messages[i].author = this.currUser.username;
               } else {
-                this.messages[i].author = "Receiver"
+                this.messages[i].author = localStorage.getItem("selectedUserName")
               }
             }
           })
@@ -83,6 +83,7 @@ export default {
     },
     // 从List.vue调用getChatHistory，方法有点冗余，不想改了
     selectUserTrigger(user) {
+      localStorage.setItem("selectedUserName", user.username)
       localStorage.setItem("selectedUser", user.userId);
       this.getChatHistory();
     },
