@@ -8,29 +8,33 @@
         <li><router-link to="/userlist" class="nav-item">UserList</router-link></li>
       </ul>
     </div>
+    
     <div class="profile-content">
       <div class="user-info">
         <img :src="user.avatar" alt="User Avatar" @click="triggerUpload" class="user-avatar"/>
         <input type="file" ref="avatarUpload" @change="changeAvatar" style="display: none;"/>
-        <input type="text" v-model="user.name" placeholder="Name"/>
+        <input type="text" v-model="userInfo.username" placeholder="Name"/>
         <input type="text" v-model="user.bio" placeholder="Bio"/>
-        <input type="text" v-model="user.phone" placeholder="Phone"/>
-        <input type="email" v-model="user.email" placeholder="Email"/>
+        <input type="text" v-model="userInfo.phone" placeholder="Phone"/>
+        <input type="email" v-model="userInfo.email" placeholder="Email"/>
         <textarea v-model="user.additionalInfo" placeholder="Additional Info"></textarea>
         <button @click="saveProfile">Save Profile</button>
       </div>
-      <!-- 其他路由视图内容 -->
-      <router-view />
     </div>
+
   </div>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: 'Profile',
   data() {
     return {
+      userInfo: {},
+     
       user: {
         avatar: '/images/User.png',
         name: 'John Doe',
@@ -58,8 +62,31 @@ export default {
     saveProfile() {
       // 在这里实现保存逻辑，可能需要更新服务器上的用户资料
       alert('资料保存成功！');
-    }
+    },
+ 
+    fetchMyProfile() {
+
+   
+      const url = 'api/user-info/my-profile';
+      const instance = axios.create();
+
+      instance
+        .get(url)
+        .then(response => {
+          this.userInfo = response.data; 
+         
+          console.log('用户信息:', this.userInfo);
+        })
+        .catch(error => {
+          console.error('请求错误:', error);
+        });
+    },
+  
   },
+  created() {
+    this.fetchMyProfile();
+  },
+
 };
 </script>
 
