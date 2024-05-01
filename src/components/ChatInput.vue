@@ -5,21 +5,21 @@
       <form @submit.prevent="onSubmit" class="input-form">
         <textarea
           v-model="newMessage"
-          placeholder="输入消息..."
+          placeholder="Input Message..."
           class="message-input"
           @input="autoResize"
           @keydown.enter="onEnterPress"
           @keydown="resetEmojiFlag"
         ></textarea>
         <div class="buttons">
-          <button type="submit" class="send-button">发送</button>
+          <button type="submit" class="send-button">Send</button>
           <button type="button" class="emoji-button" @click="toggleEmojiPicker">+</button>
         </div>
       </form>
       <div id="emoji-picker"></div>
     </div>
     <!-- 功能按钮区域 -->
-    <div class="action-buttons">
+<!--    <div class="action-buttons">
       <input type="file" id="image-input" ref="imageInput" accept="image/*" hidden @change="handleImageUpload">
       <div class="action-button" @click="triggerImageUpload">
         <i class="icon icon-image">📷</i>
@@ -34,7 +34,7 @@
         <i class="icon icon-audio">🎤</i>
         <span>语音</span>
       </div>
-    </div>
+    </div>-->
   </div>
 </template>
 
