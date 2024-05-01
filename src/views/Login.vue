@@ -54,6 +54,8 @@ export default {
               "Bearer " + JSON.parse(token);
             //如果登录成功，重定向到主页
             this.$router.push("/");
+            // 在这里调用 getUserInfo 方法
+            this.getUserInfo();
           }
           this.userData = response.data;
         })
@@ -62,6 +64,16 @@ export default {
           this.username = "";
           this.password = "";
         });
+    },
+    // 登录后将用户信息存入localStorage
+    getUserInfo() {
+      axios.get('api/user-info/my-profile')
+          .then(response => {
+            // 将response.data对象转换为JSON字符串
+            const userInfoJson = JSON.stringify(response.data);
+            // 将JSON字符串存储在localStorage中，键为"user"
+            localStorage.setItem("user", userInfoJson);
+          })
     },
   },
 };
